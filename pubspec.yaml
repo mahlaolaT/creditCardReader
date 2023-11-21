@@ -30,7 +30,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  # card scanning dependency.
   ml_card_scanner: ^0.0.7
+
+  # local storage dependency.
+  hive: ^2.2.3
 
 
   # The following adds the Cupertino Icons font to your application.
