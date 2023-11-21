@@ -1,8 +1,5 @@
-import 'package:card_reader/scanner_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
-import 'card_info_form.dart';
+import 'add_card_screen.dart';
 
 void main() => runApp(const CardReaderApp());
 
@@ -14,7 +11,7 @@ class CardReaderApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Card Reader',
-      home: CardInfoForm(),
+      home: AddCardScreen(),
     );
   }
 }
