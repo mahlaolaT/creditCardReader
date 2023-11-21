@@ -1,6 +1,8 @@
 import 'package:card_reader/scanner_screen.dart';
+import 'package:dart_countries/dart_countries.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hive/hive.dart';
 import 'input_formatter.dart';
 
 class AddCardScreen extends StatefulWidget {
@@ -19,6 +21,12 @@ class _AddCardScreenState extends State<AddCardScreen> {
   final TextEditingController _cardTypeController = TextEditingController();
   final TextEditingController _expDateController = TextEditingController();
   final TextEditingController _cvvController = TextEditingController();
+
+  @override
+  void initState() {
+    var cards = Hive.box('cards');
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +60,8 @@ class _AddCardScreenState extends State<AddCardScreen> {
                                 ),
                                 child: const Icon(Icons.credit_card),
                               ),
-                              const Text('Credit Card Details',
+                              const Text(
+                                'Credit Card Details',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
@@ -111,12 +120,34 @@ class _AddCardScreenState extends State<AddCardScreen> {
                         Container(
                           padding: const EdgeInsets.all(8.0),
                           child: TextFormField(
+                            readOnly: true,
+                            focusNode: FocusNode(canRequestFocus: false),
+                            onTap: () {
+                              showModalBottomSheet(
+                                isDismissible: true,
+                                backgroundColor: Colors.white,
+                                context: context,
+                                builder: (context) => Expanded(
+                                  child: ListView.builder(
+                                    itemCount: countries.length,
+                                    itemBuilder: (context, i) => ListTile(
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        _countryOfIssueController.text = countries[i].nativeName;
+                                      },
+                                      title: Text(countries[i].nativeName),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                             controller: _countryOfIssueController,
                             style: const TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.w600,
                             ),
                             decoration: const InputDecoration(
+                              suffixIcon: Icon(Icons.arrow_drop_down),
                               labelText: 'Country Of Issue',
                               hintText: 'Country Of Issue',
                               hintStyle: TextStyle(
