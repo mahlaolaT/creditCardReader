@@ -256,8 +256,7 @@ class _CardInfoFormState extends State<CardInfoForm> {
     );
   }
 
-  Future<void> _scanCard() async {
-    Navigator.of(context).push(
+  Future<void> _scanCard() async => Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => Scanner(
           onScanCard: (cardInfo) {
@@ -270,5 +269,4 @@ class _CardInfoFormState extends State<CardInfoForm> {
         ),
       ),
     );
-  }
 }

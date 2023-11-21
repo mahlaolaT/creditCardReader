@@ -41,7 +41,6 @@ class _ScannerState extends State<Scanner> {
                 controller: _controller,
                 overlayOrientation: CardOrientation.landscape,
                 cameraResolution: CameraResolution.max,
-                oneShotScanning: true,
               ),
             ),
           ],
