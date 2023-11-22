@@ -3,14 +3,9 @@ import 'package:card_reader/cards.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 
-class CardsScreen extends StatefulWidget {
+class CardsScreen extends StatelessWidget {
   const CardsScreen({super.key});
 
-  @override
-  State<CardsScreen> createState() => _CardsScreenState();
-}
-
-class _CardsScreenState extends State<CardsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
