@@ -1,8 +1,10 @@
+import 'package:card_reader/cards.dart';
+import 'package:card_reader/cards_screen.dart';
+import 'package:card_reader/main.dart';
 import 'package:card_reader/scanner_screen.dart';
 import 'package:dart_countries/dart_countries.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hive/hive.dart';
 import 'input_formatter.dart';
 
 class AddCardScreen extends StatefulWidget {
@@ -13,18 +15,21 @@ class AddCardScreen extends StatefulWidget {
 }
 
 class _AddCardScreenState extends State<AddCardScreen> {
+  List<Country> allCountries = [];
   final _cardInfoKey = GlobalKey<FormState>();
 
   final TextEditingController _cardNoController = TextEditingController();
-  final TextEditingController _countryOfIssueController =
-      TextEditingController();
+  final TextEditingController _countryOfIssueController = TextEditingController();
   final TextEditingController _cardTypeController = TextEditingController();
   final TextEditingController _expDateController = TextEditingController();
   final TextEditingController _cvvController = TextEditingController();
 
   @override
   void initState() {
-    var cards = Hive.box('cards');
+    allCountries.addAll(countries);
+    allCountries.sort(
+      (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+    );
     super.initState();
   }
 
@@ -89,9 +94,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
                             decoration: InputDecoration(
                               suffixIcon: IconButton(
                                 icon: const Icon(Icons.camera_alt_outlined),
-                                onPressed: () {
-                                  _scanCard();
-                                },
+                                onPressed: () => _scanCard(),
                               ),
                               labelText: 'Card Number',
                               hintText: 'Card Number',
@@ -129,14 +132,18 @@ class _AddCardScreenState extends State<AddCardScreen> {
                                 context: context,
                                 builder: (context) => Expanded(
                                   child: ListView.builder(
-                                    itemCount: countries.length,
-                                    itemBuilder: (context, i) => ListTile(
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        _countryOfIssueController.text = countries[i].nativeName;
-                                      },
-                                      title: Text(countries[i].nativeName),
-                                    ),
+                                    itemCount: allCountries.length,
+                                    itemBuilder: (context, i) {
+                                      final country = allCountries[i];
+                                      return ListTile(
+                                        title: Text(country.name),
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          _countryOfIssueController.text =
+                                              country.name;
+                                        },
+                                      );
+                                    },
                                   ),
                                 ),
                               );
@@ -322,8 +329,17 @@ class _AddCardScreenState extends State<AddCardScreen> {
                     'Add Card',
                     style: TextStyle(color: Colors.white),
                   ),
-                  onPressed: () {
-                    if (_cardInfoKey.currentState!.validate()) {}
+                  onPressed: () async {
+                    if (_cardInfoKey.currentState!.validate()) {
+                      _saveCard().then(
+                        (value) => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CardsScreen(),
+                          ),
+                        ),
+                      );
+                    }
                   },
                 ),
               ),
@@ -334,17 +350,33 @@ class _AddCardScreenState extends State<AddCardScreen> {
     );
   }
 
-  Future<void> _scanCard() async => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => Scanner(
-            onScanCard: (cardInfo) {
-              setState(() {
-                _cardNoController.text = cardInfo.number;
-                _cardTypeController.text = cardInfo.type;
-                _expDateController.text = cardInfo.expiry;
-              });
-            },
-          ),
+  Future<void> _scanCard() async {
+    _cardInfoKey.currentState!.reset();
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => Scanner(
+          onScanCard: (cardInfo) {
+            setState(() {
+              _cardNoController.text = cardInfo.number;
+              _cardTypeController.text = cardInfo.type;
+              _expDateController.text = cardInfo.expiry;
+            });
+          },
         ),
-      );
+      ),
+    );
+  }
+
+  Future<void> _saveCard() async {
+    int cardNumber = int.parse(_cardNoController.text);
+    await box!.put(
+      _cardNoController.text,
+      Cards(
+        cardNumber: cardNumber,
+        countryIssued: _countryOfIssueController.text,
+        cardType: _cardTypeController.text,
+        expiryDate: _expDateController.text,
+      ),
+    );
+  }
 }

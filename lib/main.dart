@@ -1,7 +1,16 @@
+import 'package:card_reader/cards.dart';
+import 'package:card_reader/cards_screen.dart';
 import 'package:flutter/material.dart';
-import 'add_card_screen.dart';
+import 'package:hive_flutter/adapters.dart';
 
-void main() => runApp(const CardReaderApp());
+Box? box;
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter(CardsAdapter());
+  box = await Hive.openBox<Cards>("cards");
+  runApp(const CardReaderApp());
+}
 
 class CardReaderApp extends StatelessWidget {
   const CardReaderApp({super.key});
@@ -11,7 +20,7 @@ class CardReaderApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Card Reader',
-      home: AddCardScreen(),
+      home: CardsScreen(),
     );
   }
 }
