@@ -5,6 +5,7 @@ import 'package:card_reader/scanner_screen.dart';
 import 'package:dart_countries/dart_countries.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'app_config.dart';
 import 'input_formatter.dart';
 
 class AddCardScreen extends StatefulWidget {
@@ -26,10 +27,12 @@ class _AddCardScreenState extends State<AddCardScreen> {
 
   @override
   void initState() {
-    allCountries.addAll(countries);
-    allCountries.sort(
-      (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
-    );
+    for (var country in countries) {
+      if (!AppConfig.bannedCountries.contains(country.name)) {
+        allCountries.add(country);
+      }
+    }
+    allCountries.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
     super.initState();
   }
 

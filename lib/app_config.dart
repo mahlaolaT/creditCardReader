@@ -1,0 +1,30 @@
+class AppConfig {
+  static List<String> bannedCountries = [
+    'Afghanistan',
+    'Balkans',
+    'Belarus',
+    'Burma',
+    'Central African Republic',
+    'Congo',
+    'Ethiopia',
+    'Hong Kong',
+    'Iran',
+    'Iraq',
+    'Lebanon',
+    'Libya',
+    'Mali',
+    'Nicaragua',
+    'North Korea',
+    'Russia',
+    'Somalia',
+    'Sudan',
+    'South Sudan',
+    'Syria',
+    'Ukraine',
+    'Russia',
+    'Venezuela',
+    'Yemen',
+    'Zimbabwe',
+    // Add more countries as needed
+  ];
+}
