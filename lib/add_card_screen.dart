@@ -1,15 +1,16 @@
-import 'package:card_reader/cards.dart';
 import 'package:card_reader/cards_screen.dart';
-import 'package:card_reader/main.dart';
 import 'package:card_reader/scanner_screen.dart';
 import 'package:dart_countries/dart_countries.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'app_config.dart';
+import 'bloc/card_cubit.dart';
 import 'input_formatter.dart';
 
 class AddCardScreen extends StatefulWidget {
-  const AddCardScreen({Key? key}) : super(key: key);
+
+  const AddCardScreen({super.key});
 
   @override
   State<AddCardScreen> createState() => _AddCardScreenState();
@@ -20,7 +21,8 @@ class _AddCardScreenState extends State<AddCardScreen> {
   final _cardInfoKey = GlobalKey<FormState>();
 
   final TextEditingController _cardNoController = TextEditingController();
-  final TextEditingController _countryOfIssueController = TextEditingController();
+  final TextEditingController _countryOfIssueController =
+      TextEditingController();
   final TextEditingController _cardTypeController = TextEditingController();
   final TextEditingController _expDateController = TextEditingController();
   final TextEditingController _cvvController = TextEditingController();
@@ -38,6 +40,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    CardCubit cardCubit = context.read<CardCubit>();
     return Scaffold(
       body: Center(
         child: Form(
@@ -332,16 +335,25 @@ class _AddCardScreenState extends State<AddCardScreen> {
                     'Add Card',
                     style: TextStyle(color: Colors.white),
                   ),
-                  onPressed: () async {
+                  onPressed: () {
                     if (_cardInfoKey.currentState!.validate()) {
-                      _saveCard().then(
-                        (value) => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CardsScreen(),
-                          ),
-                        ),
-                      );
+                      context
+                          .read<CardCubit>()
+                          .saveCard(
+                              _cardNoController.text,
+                              _countryOfIssueController.text,
+                              _cardTypeController.text,
+                              _expDateController.text)
+                          .then((_) => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BlocProvider.value(
+                                  value: cardCubit,
+                                  child: const CardsScreen(),
+                                ),
+                              ),
+                            ),
+                          );
                     }
                   },
                 ),
@@ -366,19 +378,6 @@ class _AddCardScreenState extends State<AddCardScreen> {
             });
           },
         ),
-      ),
-    );
-  }
-
-  Future<void> _saveCard() async {
-    int cardNumber = int.parse(_cardNoController.text);
-    await box!.put(
-      _cardNoController.text,
-      Cards(
-        cardNumber: cardNumber,
-        countryIssued: _countryOfIssueController.text,
-        cardType: _cardTypeController.text,
-        expiryDate: _expDateController.text,
       ),
     );
   }

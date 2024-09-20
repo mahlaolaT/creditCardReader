@@ -1,14 +1,14 @@
 import 'package:card_reader/cards.dart';
 import 'package:card_reader/cards_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'bloc/card_cubit.dart';
 
-Box? box;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(CardsAdapter());
-  box = await Hive.openBox<Cards>("cards");
   runApp(const CardReaderApp());
 }
 
@@ -17,10 +17,13 @@ class CardReaderApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Card Reader',
-      home: CardsScreen(),
+      home: BlocProvider(
+        create: (context) => CardCubit(),
+        child: const CardsScreen(),
+      ),
     );
   }
 }
