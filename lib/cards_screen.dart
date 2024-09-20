@@ -12,7 +12,7 @@ class CardsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    CardCubit cardCubit = context.read<CardCubit>()..savedCards();
+    CardCubit cardCubit = context.read<CardCubit>();
     return Scaffold(
       body: BlocBuilder<CardCubit, CardState>(builder: (context, state) {
         if (state is CardSaved) {

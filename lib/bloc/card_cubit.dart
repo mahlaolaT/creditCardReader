@@ -37,7 +37,7 @@ class CardCubit extends Cubit<CardState> {
   savedCards() async {
     Box<Cards> box = await Hive.openBox('cards');
     List<Cards> cards = box.values.toList();
-    emit( cards.isNotEmpty ? CardSaved(cards) : CardInitial());
+    emit(cards.isNotEmpty ? CardSaved(cards) : CardInitial());
   }
 
   removeCard(int index) async {
@@ -45,6 +45,6 @@ class CardCubit extends Cubit<CardState> {
     List<Cards> cards = box.values.toList();
     cards.removeAt(index);
     await box.deleteAt(index);
-    emit(CardSaved(cards));
+    emit(cards.isNotEmpty ? CardSaved(cards) : CardInitial());
   }
 }
