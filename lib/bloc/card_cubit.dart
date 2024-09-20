@@ -44,7 +44,7 @@ class CardCubit extends Cubit<CardState> {
     Box<Cards> box = await Hive.openBox('cards');
     List<Cards> cards = box.values.toList();
     cards.removeAt(index);
-    box.delete(index);
+    await box.deleteAt(index);
     emit(CardSaved(cards));
   }
 }
