@@ -71,7 +71,7 @@ class CardsScreen extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) => BlocProvider.value(
                 value: cardCubit,
-                child: const AddCardScreen(),
+                child: AddCardScreen(),
               ),
             ),
           ),
