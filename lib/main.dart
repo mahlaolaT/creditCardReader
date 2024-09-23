@@ -21,7 +21,7 @@ class CardReaderApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Card Reader',
       home: BlocProvider(
-        create: (context) => CardCubit(),
+        create: (context) => CardCubit()..savedCards(),
         child: const CardsScreen(),
       ),
     );
